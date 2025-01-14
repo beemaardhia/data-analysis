@@ -3,7 +3,7 @@ import plotly.express as px
 import pandas as pd  
   
 # Load data  
-df = pd.read_csv("main_data.csv")  # Ganti "bike_sharing.csv" dengan nama file Anda  
+df = pd.read_csv("dashboard\main_data.csv")  # Ganti "bike_sharing.csv" dengan nama file Anda  
   
 # Mapping angka ke nama hari jika diperlukan
 weekday_mapping = {"Mon": "Monday", "Tues": "Tuesday", "Wed": "Wednesday", "Thurs": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
