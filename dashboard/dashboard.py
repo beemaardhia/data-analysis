@@ -73,6 +73,7 @@ fig.update_layout(
 )
 
 # Menampilkan plot
+st.subheader('Visualization')
 st.plotly_chart(fig)
 
 st.subheader('Filtered Data')
