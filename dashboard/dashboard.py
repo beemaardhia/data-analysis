@@ -75,4 +75,5 @@ fig.update_layout(
 # Menampilkan plot
 st.plotly_chart(fig)
 
+st.subheader('Filtered Data')
 st.write(df_filtered)
