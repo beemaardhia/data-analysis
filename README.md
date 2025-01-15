@@ -39,5 +39,5 @@ pip install -r requirements.txt
 Navigate to the `dashboard` directory and run the following command:
 
 ```bash
-streamlit run dashboard.py
+streamlit run dashboard/dashboard.py
 ```
