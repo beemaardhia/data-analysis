@@ -2,40 +2,38 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-# Load data 
 df = pd.read_csv(r"dashboard/dashboard.csv")
 
-# Convert the 'date' column to datetime format
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 
-# Sidebar filter for date range
 min_date = df['date'].min()
 max_date = df['date'].max()
 
-start_date, end_date = st.sidebar.date_input(
+date_selection = st.sidebar.date_input(
     "Pilih rentang tanggal:",
     [min_date, max_date],
     min_value=min_date,
     max_value=max_date
 )
 
-# Filter data based on the selected date range
+if len(date_selection) != 2:
+    st.warning("Silakan pilih dua tanggal untuk melanjutkan.")
+    st.stop()
+
+start_date, end_date = date_selection
+
 df = df[(df['date'] >= pd.to_datetime(start_date)) & (df['date'] <= pd.to_datetime(end_date))]
 
-# Mapping angka ke nama hari jika diperlukan
 weekday_mapping = {"Mon": "Monday", "Tues": "Tuesday", "Wed": "Wednesday", "Thurs": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
 df['weekday'] = df['weekday'].map(weekday_mapping)
 
-# Sidebar filter hanya ada 2 opsi
 selected_option = st.sidebar.radio("Pilih Pertanyaan:", ("Pertanyaan 1", "Pertanyaan 2"))
 
 if selected_option == "Pertanyaan 1":
     st.header("Pertanyaan 1: Bagaimana pola rata-rata jumlah pengguna sepeda (casual dan registered) sepanjang hari dalam seminggu?")
 
-    # Pemrosesan data untuk Pertanyaan 1
     df_filtered_q1 = df.groupby(['weekday', 'hour'])[['count', 'casual', 'registered']].mean().reset_index()
 
-    # Grafik 1: Jumlah sepeda per jam berdasarkan hari
     fig = px.line(
         df_filtered_q1,
         x='hour',
@@ -61,7 +59,6 @@ if selected_option == "Pertanyaan 1":
     - Pada akhir pekan (Sabtu dan Minggu), aktivitas lebih tinggi pada siang hari dibandingkan pagi hari, dengan distribusi yang lebih merata tanpa puncak yang tajam.
     """)
 
-    # Grafik 2: Casual Users
     fig = px.line(
         df_filtered_q1,
         x='hour',
@@ -86,7 +83,6 @@ if selected_option == "Pertanyaan 1":
     - Pada hari kerja, penggunaan cenderung rendah sepanjang hari, tanpa puncak signifikan.
     """)
 
-    # Grafik 3: Registered Users
     fig = px.line(
         df_filtered_q1,
         x='hour',
@@ -120,10 +116,8 @@ if selected_option == "Pertanyaan 1":
 elif selected_option == "Pertanyaan 2":
     st.header("Pertanyaan 2: Bagaimana pengaruh kondisi cuaca dan musim terhadap rata-rata jumlah pengguna sepeda per jam?")
 
-    # Pemrosesan data untuk Pertanyaan 2
     df_filtered_q2 = df.groupby(['weather', 'hour'])['count'].mean().reset_index()
 
-    # Grafik 1: Pengaruh Cuaca terhadap Jumlah Pengguna Sepeda
     fig = px.line(
         df_filtered_q2,
         x='hour',
@@ -150,10 +144,8 @@ elif selected_option == "Pertanyaan 2":
     - Kondisi heavy rain (hujan lebat) hampir tidak menunjukkan aktivitas pengguna sepeda, terutama pada jam-jam sore hari.
     """)
 
-    # Pemrosesan data untuk musim
     df_filtered_q2_season = df.groupby(['season', 'hour'])['count'].mean().reset_index()
 
-    # Grafik 2: Pengaruh Musim terhadap Jumlah Pengguna Sepeda
     fig = px.line(
         df_filtered_q2_season,
         x='hour',
