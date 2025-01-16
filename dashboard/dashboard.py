@@ -1,9 +1,26 @@
-import streamlit as st  
-import plotly.express as px  
-import pandas as pd  
+import streamlit as st
+import plotly.express as px
+import pandas as pd
 
-# Load data  
-df = pd.read_csv(r"dashboard/main_data.csv")  # Ganti "bike_sharing.csv" dengan nama file Anda  
+# Load data
+df = pd.read_csv(r"dashboard/dashboard.csv")
+
+# Convert the 'date' column to datetime format
+df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+
+# Sidebar filter for date range
+min_date = df['date'].min()
+max_date = df['date'].max()
+
+start_date, end_date = st.sidebar.date_input(
+    "Pilih rentang tanggal:",
+    [min_date, max_date],
+    min_value=min_date,
+    max_value=max_date
+)
+
+# Filter data based on the selected date range
+df = df[(df['date'] >= pd.to_datetime(start_date)) & (df['date'] <= pd.to_datetime(end_date))]
 
 # Mapping angka ke nama hari jika diperlukan
 weekday_mapping = {"Mon": "Monday", "Tues": "Tuesday", "Wed": "Wednesday", "Thurs": "Thursday", "Fri": "Friday", "Sat": "Saturday", "Sun": "Sunday"}
@@ -14,10 +31,9 @@ selected_option = st.sidebar.radio("Pilih Pertanyaan:", ("Pertanyaan 1", "Pertan
 
 if selected_option == "Pertanyaan 1":
     st.header("Pertanyaan 1: Bagaimana pola rata-rata jumlah pengguna sepeda (casual dan registered) sepanjang hari dalam seminggu?")
-    
+
     # Pemrosesan data untuk Pertanyaan 1
     df_filtered_q1 = df.groupby(['weekday', 'hour'])[['count', 'casual', 'registered']].mean().reset_index()
-
 
     # Grafik 1: Jumlah sepeda per jam berdasarkan hari
     fig = px.line(
@@ -106,7 +122,7 @@ elif selected_option == "Pertanyaan 2":
 
     # Pemrosesan data untuk Pertanyaan 2
     df_filtered_q2 = df.groupby(['weather', 'hour'])['count'].mean().reset_index()
-    
+
     # Grafik 1: Pengaruh Cuaca terhadap Jumlah Pengguna Sepeda
     fig = px.line(
         df_filtered_q2,
