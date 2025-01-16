@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-# Load data
+# Load data 
 df = pd.read_csv(r"dashboard/dashboard.csv")
 
 # Convert the 'date' column to datetime format
